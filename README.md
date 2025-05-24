@@ -110,6 +110,18 @@ Make sure your `index.html` has the proper structure and a container for the gam
 </html>
 ```
 
+Important: Make sure your Phaser configuration includes the `parent: 'game'` property to match the container div's id:
+
+```javascript
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  parent: 'game', // This must match the div id in your HTML
+  // ... other config options
+};
+```
+
 ### 3. Dependencies Version Conflicts
 
 Make sure you're using compatible versions of webpack and its plugins:
