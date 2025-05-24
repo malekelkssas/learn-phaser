@@ -18,7 +18,7 @@ function preload () {
 }
 
 function create () {
-  this.add.image(config.width / 2, config.height / 2, "sky")
+  this.add.image(0, 0, "sky").setOrigin(0);
 }
 
 export default config
