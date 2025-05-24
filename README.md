@@ -46,3 +46,4 @@ create() {
     - Bottom right is (1, 1)
     - Whatever is the image size
   - Can have a short to one number if the `x` the same as `y` e.g. `setOrigin(0)`
+  - ![Screenshot_٢٠٢٥٠٥٢٥_٠١٥٤٢٠](https://github.com/user-attachments/assets/ef2d7d42-891e-4dac-9f0d-fa608949f536)
