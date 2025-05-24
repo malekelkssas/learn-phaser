@@ -1,28 +1,24 @@
 import Phaser from "phaser";
 
 const config = {
-  type: Phaser.AUTO,
   width: 800,
   height: 600,
-  parent: 'game', // This targets your existing div id="game"
+  parent: "game",
   physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 200 }
-    }
+    default: "arcade"
   },
   scene: {
-    preload: preload,
-    create: create
+    preload,
+    create
   }
-};
-
-function preload() {
-  this.load.image('sky', 'assets/sky.png');
 }
 
-function create() {
-  this.add.image(400, 300, 'sky');
+function preload () {
+  this.load.image("sky", "assets/sky.png")
 }
 
-export default config;
+function create () {
+  this.add.image(config.width / 2, config.height / 2, "sky")
+}
+
+export default config
