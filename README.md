@@ -47,3 +47,35 @@ create() {
     - Whatever is the image size
   - Can have a short to one number if the `x` the same as `y` e.g. `setOrigin(0)`
   - ![Screenshot_٢٠٢٥٠٥٢٥_٠١٥٤٢٠](https://github.com/user-attachments/assets/ef2d7d42-891e-4dac-9f0d-fa608949f536)
+
+### 4. Sprites
+```javascript
+// Like the images we add sprites the same way
+this.add.sprite(x, y, key)
+```
+- The sprite Object like image object also have `setOrigin` func
+- The main difference between the normal Image Object and Sprite is that we have much more control on the Sprite -> e.g. By destroying it and so on
+- But in case we want to apply physics to the body (For this we must enable physics for the game first e.g. Arcade) -> then it is better to use `this.physics.sprite.add` -> then we will be able to use things like velocity and so on
+
+### 5. Update Function
+```javascript
+update(time, delta) {
+    // Game loop code here
+}
+```
+- Mainly it is like the Game loop
+- The Phaser file/game will have the context/scene object in the `this` keyword -> This because it is inside the scene object
+- By default the game is updating by 60 fps
+- It can be empty `update()` or have two main params `update(time, delta)`:
+  - `time`: the time since the games started in ms
+  - `delta`: the last frame update in ms
+- Pretty example by setting the velocity in create function and tracking it then try to set the gravity and track the velocity
+
+### 6. Physics
+There are different options/plugins for physics in Phaser that manage physics simulations:
+- arcade - a lightweight physics config
+
+#### Physics Object
+- In case to add sprite object with physics we add it using `this.physics.add.sprite(x, y, key)`
+- We can then check/apply/modify anything from `body` Object then inside the sprite (which will just appear when add sprite using physics not a normal sprite) -> e.g. `$.body.gravity = 200`
+- The gravity unit is by `pixels/s` and it is almost the same for everything (e.g. the velocity for example and so on)
