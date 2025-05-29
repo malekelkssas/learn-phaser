@@ -75,7 +75,43 @@ update(time, delta) {
 There are different options/plugins for physics in Phaser that manage physics simulations:
 - arcade - a lightweight physics config
 
+#### Physics Configuration
+We can apply physics to every sprite game object by setting it inside the game config from the chosen physics model:
+```javascript
+const config = {
+  // ... other config options
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: {
+        y: 200
+      }
+    }
+  }
+}
+```
+
 #### Physics Object
 - In case to add sprite object with physics we add it using `this.physics.add.sprite(x, y, key)`
 - We can then check/apply/modify anything from `body` Object then inside the sprite (which will just appear when add sprite using physics not a normal sprite) -> e.g. `$.body.gravity = 200`
 - The gravity unit is by `pixels/s` and it is almost the same for everything (e.g. the velocity for example and so on)
+
+#### Controlling Update Frequency
+We can control the update by tracking the total delta time. For example, if we want to perform an action every second (1000ms):
+
+```javascript
+let totalDelta = 0;
+
+function update(time, delta) {
+    totalDelta += delta;
+
+    if(totalDelta < 1000) return;  // Skip if less than 1 second
+    totalDelta = 0;  // Reset counter
+
+    // Perform actions here
+    console.log(bird);
+    bird.destroy();
+}
+```
+
+This pattern is useful when you want to perform actions at specific intervals rather than every frame.
