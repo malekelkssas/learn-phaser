@@ -115,3 +115,44 @@ function update(time, delta) {
 ```
 
 This pattern is useful when you want to perform actions at specific intervals rather than every frame.
+
+### 7. Input Handling
+Phaser provides several ways to handle user input, including mouse/touch and keyboard events. Here's how to set up basic input handling:
+
+#### Mouse/Touch Input
+```javascript
+// In the create function
+this.input.on("pointerdown", callbackFunction)
+```
+- `pointerdown` event works for both mouse clicks and touch events
+- The callback function will be executed whenever the user clicks or touches the screen
+
+#### Keyboard Input
+```javascript
+// In the create function
+this.input.keyboard.on("keydown_SPACE", callbackFunction)
+```
+- The format is `keydown_` followed by the key name (e.g., SPACE, A, B, etc.)
+- The callback function will be executed when the specified key is pressed
+
+#### Example from our Flappy Bird Clone
+```javascript
+function create() {
+    // ... other create code ...
+    
+    // Handle both mouse/touch and spacebar input
+    this.input.on("pointerdown", flap)
+    this.input.keyboard.on("keydown_SPACE", flap)
+}
+
+function flap() {
+    // This function will be called when either:
+    // 1. The user clicks/touches the screen
+    // 2. The user presses the spacebar
+    bird.body.velocity.y = -VELOCITY;
+}
+```
+
+This setup allows for multiple input methods to trigger the same action, making the game more accessible across different devices and user preferences.
+
+it is also created in the create function
