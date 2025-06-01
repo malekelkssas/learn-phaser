@@ -96,6 +96,32 @@ const config = {
 - We can then check/apply/modify anything from `body` Object then inside the sprite (which will just appear when add sprite using physics not a normal sprite) -> e.g. `$.body.gravity = 200`
 - The gravity unit is by `pixels/s` and it is almost the same for everything (e.g. the velocity for example and so on)
 
+#### Physics Groups
+Physics groups are collections of physics-enabled game objects that can be managed together. They're useful for handling multiple similar objects (like pipes in Flappy Bird):
+
+```javascript
+// Create a physics group
+this.pipes = this.physics.add.group();
+
+// Add sprites to the group
+const upperPipe = this.pipes.create(0, 0, PIPE_KEY).setOrigin(0, 1);
+const lowerPipe = this.pipes.create(0, 0, PIPE_KEY).setOrigin(0, 0);
+
+// Apply physics properties to all objects in the group
+this.pipes.setVelocityX(PIPE_X_SPEED);
+
+// Access all objects in the group
+this.pipes.getChildren().forEach(pipe => {
+    // Do something with each pipe
+});
+```
+
+Key features of physics groups:
+- Create multiple physics objects with shared properties
+- Apply physics operations to all objects at once
+- Easily iterate through all objects in the group
+- Manage similar game objects (like obstacles, enemies, or collectibles) efficiently
+
 #### Controlling Update Frequency
 We can control the update by tracking the total delta time. For example, if we want to perform an action every second (1000ms):
 
