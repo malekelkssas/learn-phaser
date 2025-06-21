@@ -1,16 +1,15 @@
 import Phaser from "phaser";
+import { SKY_KEY, BIRD_KEY, PIPE_KEY } from "../constants/game-object-keys.constants";
+import BaseScene from "./BaseScene";
 
-const SKY_KEY = "sky";
-const BIRD_KEY = "bird";
-const PIPE_KEY = "pipe";
 const VELOCITY = 200;
 const PIPE_VERTICAL_DISTANCE = [100, 200];
 const PIPE_X_SPEED = -200;
 const NUM_PIPES = 4;
-class PlayScene extends Phaser.Scene {
+class PlayScene extends BaseScene {
     constructor(config) {
         // Unique identifier/key for the scene
-        super("PlayScene");
+        super("PlayScene", config);
         // Configuration object
         this.config = config;
         this.bird = null;
@@ -20,12 +19,9 @@ class PlayScene extends Phaser.Scene {
             x: 0,
             y: 0
         };
-    }
-
-    preload() {
-        this.load.image(SKY_KEY, "assets/sky.png")
-        this.load.image(BIRD_KEY, "assets/bird.png")
-        this.load.image(PIPE_KEY, "assets/pipe.png")
+        this.score = 0;
+        this.scoreText = new String();
+        this.isScenePaused = false;
     }
 
     createBird() {
@@ -33,11 +29,12 @@ class PlayScene extends Phaser.Scene {
         this.bird.x = this.bird.x - this.bird.width / 2;
         this.bird.y = this.bird.y - this.bird.height / 2;
         this.bird.body.gravity.y = 300;
+        this.bird.setCollideWorldBounds(true);
         this.initialPosition = { x: this.bird.x, y: this.bird.y };
     }
 
     create() {
-        this.add.image(0, 0, SKY_KEY).setOrigin(0);
+        super.create();
         // Create the bird
         this.createBird();
 
@@ -45,8 +42,14 @@ class PlayScene extends Phaser.Scene {
         // Create the pipes
         this.pipes = this.physics.add.group();
         for (let i = 0; i < NUM_PIPES; i++) {
-            const upperPipe = this.pipes.create(0, 0, PIPE_KEY).setOrigin(0, 1);
-            const lowerPipe = this.pipes.create(0, 0, PIPE_KEY).setOrigin(0, 0);
+            const upperPipe = this.pipes.create(0, 0, PIPE_KEY)
+            .setImmovable(true) // Prevent the collision effect with the bird (Bounce effect)
+            .setOrigin(0, 1);
+
+            const lowerPipe = this.pipes.create(0, 0, PIPE_KEY)
+            .setImmovable(true) // Prevent the collision effect with the bird (Bounce effect)
+            .setOrigin(0, 0);
+
             this.placePipe(upperPipe, lowerPipe);
         }
         this.pipes.setVelocityX(PIPE_X_SPEED);
@@ -54,11 +57,35 @@ class PlayScene extends Phaser.Scene {
         // Handle input
         this.createHandleInput();
 
+        // Create the collider
+        this.createCollider();
+
+        // Create the score text
+        this.createScoreText();
+
+    }
+
+    createScoreText() {
+        this.score = 0;
+        this.scoreText = this.add.text(10, 10, `Score: ${this.score}`, { fontSize: 24, fill: "#fff" });
+        
+    }
+
+    createCollider() {
+        this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this);
     }
 
     createHandleInput() {
         this.input.on("pointerdown", this.flap, this)
         this.input.keyboard.on("keydown_SPACE", this.flap, this)
+        this.input.keyboard.on("keydown_P", () => {
+            if (this.isScenePaused) {
+                this.physics.resume();
+            } else {
+                this.physics.pause();
+            }
+            this.isScenePaused = !this.isScenePaused;
+        }, this)
     }
 
     getTheRightMostPipe() {
@@ -84,9 +111,14 @@ class PlayScene extends Phaser.Scene {
 
     recylePipes() {
         const rightMostPipe = this.getTheRightMostPipe() + this.config.width / 2;
+        let isScoreIncremented = false;
         this.pipes.getChildren().forEach(pipe => {
             if (pipe.getBounds().right < 0) {
                 pipe.x = rightMostPipe;
+                if (!isScoreIncremented) {
+                    this.incrementScore();
+                    isScoreIncremented = true;
+                }
             }
         })
     }
@@ -97,15 +129,32 @@ class PlayScene extends Phaser.Scene {
         this.bird.body.velocity.y = 0;
     }
 
+    gameOver() {
+        this.bird.body.velocity.y = 0;
+        this.bird.setTint(0xff0000);
+        this.physics.pause();
+        // key event if the space key is pressed
+        this.input.keyboard.on("keydown_SPACE", () => {
+            this.scene.restart();
+        })
+
+        this.time.addEvent({
+            delay: 2000,
+            callback: () => {
+                this.scene.restart();
+            },
+            loop: false
+        })
+    }
+
     flap() {
         this.bird.body.velocity.y = -VELOCITY;
     }
 
     update(time, delta) {
         // Add what you want to track/update here on frame level
-        if (this.bird.y > this.config.height || this.bird.y < 0) {
-            this.resetBird();
-            alert("You lost!")
+        if (this.bird.getBounds().bottom >= this.config.height || this.bird.getBounds().top <= 0) {
+            this.gameOver();
         }
 
         this.recylePipes();
@@ -114,6 +163,11 @@ class PlayScene extends Phaser.Scene {
         // totalDelta = 0;
 
         // Add what you want to track/update here on second level
+    }
+    
+    incrementScore() {
+        this.score++;
+        this.scoreText.setText(`Score: ${this.score}`);
     }
 }
 

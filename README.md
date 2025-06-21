@@ -24,7 +24,7 @@ create() {
 - It is inserted inside the config -> scene object
 - The Phaser file/game will have the context/scene object in the `this` keyword -> This because it is inside the scene object
 - This will use mainly `this.load.$` e.g.
-  - `this.add.image(key, path)` -> the key is any name we choose for it
+  - `this.load.image(key, path)` -> the key is any name we choose for it
 
 ### 3. Coordinate System
 - The scene origin is on top left
@@ -32,7 +32,7 @@ create() {
   - The positive y is down
 - The Image and resources
   - Its origin at the center of the image/resource
-  - To make an image aligned with the scene origin you may do something like this:
+  - To make an image aligned with the scene center you may do something like this:
     ```javascript
     this.add.image(config.width / 2, config.height / 2, key)
     ```
@@ -95,6 +95,36 @@ const config = {
 - In case to add sprite object with physics we add it using `this.physics.add.sprite(x, y, key)`
 - We can then check/apply/modify anything from `body` Object then inside the sprite (which will just appear when add sprite using physics not a normal sprite) -> e.g. `$.body.gravity = 200`
 - The gravity unit is by `pixels/s` and it is almost the same for everything (e.g. the velocity for example and so on)
+- We can make objects immovable using `setImmovable(true)`. When an object is set as immovable, it will not be affected by collisions or forces from other objects, but it can still interact with them (e.g., other objects will bounce off or stop when colliding with it).
+
+#### Collisions
+Phaser provides a simple way to handle collisions between game objects:
+```javascript
+// Add collision between two objects or groups
+this.physics.add.collider(object1, object2, callback, processCallback, context);
+
+// Example from Flappy Bird
+this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this);
+```
+- The callback function is called when a collision occurs
+- The processCallback (optional) can be used to filter which collisions should trigger the callback
+- The context parameter (optional) sets the 'this' context for the callback function
+
+#### Time Events
+Phaser's time system allows you to schedule events to occur after a delay or at regular intervals:
+```javascript
+this.time.addEvent({
+    delay: 2000,  // Delay in milliseconds
+    callback: () => {
+        // Code to execute after delay
+    },
+    loop: false   // Whether to repeat the event
+});
+```
+- `delay`: Time in milliseconds before the callback is executed
+- `callback`: Function to execute when the timer completes
+- `loop`: Set to true to repeat the event, false to run once
+- Useful for scheduling game events, animations, or delayed actions
 
 #### Physics Groups
 Physics groups are collections of physics-enabled game objects that can be managed together. They're useful for handling multiple similar objects (like pipes in Flappy Bird):
